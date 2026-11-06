@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:logins.ViewModels"
+             xmlns:m="clr-namespace:logins.Models"
+             x:Class="logins.Pages.HomePage"
+             x:DataType="vm:HomeViewModel"
+             Title="Inicio">
+    <ScrollView>
+        <VerticalStackLayout Padding="24" Spacing="14" MaximumWidthRequest="560">
+
+            <Label Text="{Binding Welcome}" Style="{StaticResource Title}" />
+
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="4">
+                    <Label Text="Autenticado con" FontSize="12" TextColor="{StaticResource Gray500}" />
+                    <Label Text="{Binding ProviderText}" FontAttributes="Bold" />
+                    <Label Text="Tu rol" FontSize="12" TextColor="{StaticResource Gray500}" Margin="0,8,0,0" />
+                    <Label Text="{Binding RoleText}" FontSize="26" FontAttributes="Bold"
+                           TextColor="{StaticResource Primary}" />
+                    <Label Text="{Binding RolesSource}" FontSize="12" TextColor="{StaticResource Gray500}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Visible para todos -->
+            <Border Style="{StaticResource Card}">
+                <Label Text="📖 Contenido de lectura — lo ve cualquier usuario autenticado (viewer, editor, admin)." />
+            </Border>
+
+            <!-- Visible solo para editor y admin -->
+            <Border Style="{StaticResource Card}" IsVisible="{Binding CanEdit}">
+                <Label Text="✏️ Zona de edición — solo editor y admin." />
+            </Border>
+
+            <!-- Visible solo para admin: administra la tabla de roles -->
+            <Border Style="{StaticResource Card}" IsVisible="{Binding IsAdmin}">
+                <VerticalStackLayout Spacing="8">
+                    <Label Text="🛡️ Panel de admin — tabla de roles" FontAttributes="Bold" />
+                    <Label Text="Toca el rol de una fila para cambiarlo." FontSize="12"
+                           TextColor="{StaticResource Gray500}" />
+                    <CollectionView ItemsSource="{Binding RoleRows}" SelectionMode="None">
+                        <CollectionView.ItemTemplate>
+                            <DataTemplate x:DataType="m:RoleEntry">
+                                <Grid ColumnDefinitions="*,Auto" Padding="0,6">
+                                    <Label Text="{Binding Email}" VerticalOptions="Center" LineBreakMode="MiddleTruncation" />
+                                    <Button Grid.Column="1" Text="{Binding Role}" Style="{StaticResource SecondaryButton}"
+                                            Command="{Binding Source={RelativeSource AncestorType={x:Type vm:HomeViewModel}}, Path=ChangeRoleCommand}"
+                                            CommandParameter="{Binding .}" />
+                                </Grid>
+                            </DataTemplate>
+                        </CollectionView.ItemTemplate>
+                    </CollectionView>
+                </VerticalStackLayout>
+            </Border>
+
+            <Label Text="{Binding Message}" TextColor="{StaticResource Primary}" />
+            <Button Text="Cerrar sesión" Style="{StaticResource SecondaryButton}" Command="{Binding SignOutCommand}" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

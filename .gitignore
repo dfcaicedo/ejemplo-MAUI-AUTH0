@@ -1,0 +1,11 @@
+# Configuración con valores reales: NO subir. La plantilla es Config/AuthConfig.cs.example
+logins/Config/AuthConfig.cs
+
+# Respaldo local de la plantilla original de MAUI
+_plantilla_original/
+
+# Build / IDE
+bin/
+obj/
+.vs/
+*.user

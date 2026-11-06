@@ -1,0 +1,49 @@
+﻿<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             xmlns:vm="clr-namespace:logins.ViewModels"
+             x:Class="logins.Pages.LoginPage"
+             x:DataType="vm:LoginViewModel"
+             Title="Iniciar sesión">
+    <ScrollView>
+        <VerticalStackLayout Padding="24" Spacing="14" MaximumWidthRequest="460">
+
+            <Label Text="Login con terceros + roles" Style="{StaticResource Title}" />
+            <Label Text="Dos formas de conectarse a Google; en ambas, los roles salen de una tabla propia."
+                   TextColor="{StaticResource Gray500}" />
+
+            <!-- Camino A: nativo -->
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="A · Google nativo" FontAttributes="Bold" FontSize="18" />
+                    <Label Text="La app habla directo con Google (OAuth 2.0 + PKCE). Sin servidor intermedio. Rol en SQLite local."
+                           FontSize="12" TextColor="{StaticResource Gray500}" />
+                    <Button Text="Continuar con Google" Command="{Binding GoogleSignInCommand}" />
+                </VerticalStackLayout>
+            </Border>
+
+            <!-- Camino B: asistido por Supabase -->
+            <Border Style="{StaticResource Card}">
+                <VerticalStackLayout Spacing="10">
+                    <Label Text="B · Asistido por Supabase" FontAttributes="Bold" FontSize="18" />
+                    <Label Text="La app habla con Supabase; Supabase habla con Google y entrega un JWT. Rol en Postgres (user_roles, con RLS)."
+                           FontSize="12" TextColor="{StaticResource Gray500}" />
+                    <Button Text="Continuar con Google (vía Supabase)" Command="{Binding SupabaseGoogleSignInCommand}" />
+
+                    <Label Text="— o con correo y clave —" HorizontalOptions="Center" FontSize="12"
+                           TextColor="{StaticResource Gray500}" />
+                    <Entry Placeholder="correo" Keyboard="Email" Text="{Binding Email}" />
+                    <Entry Placeholder="clave (mín. 6)" IsPassword="True" Text="{Binding Password}" />
+                    <Grid ColumnDefinitions="*,*" ColumnSpacing="8">
+                        <Button Text="Entrar" Command="{Binding SupabaseSignInCommand}" />
+                        <Button Grid.Column="1" Text="Crear cuenta" Style="{StaticResource SecondaryButton}"
+                                Command="{Binding SupabaseSignUpCommand}" />
+                    </Grid>
+                </VerticalStackLayout>
+            </Border>
+
+            <ActivityIndicator IsRunning="{Binding IsBusy}" IsVisible="{Binding IsBusy}" />
+            <Label Text="{Binding Message}" TextColor="Crimson" />
+        </VerticalStackLayout>
+    </ScrollView>
+</ContentPage>

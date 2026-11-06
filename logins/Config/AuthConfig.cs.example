@@ -1,0 +1,61 @@
+namespace logins.Config;
+
+/// <summary>
+/// PLANTILLA DE PARAMETRIZACIÓN (esta sí se sube a Git).
+/// Para usarla: copia este archivo como "AuthConfig.cs" (sin ".example") en esta misma carpeta
+/// y reemplaza los valores "TU-...". "AuthConfig.cs" está en .gitignore y nunca se sube.
+///
+/// Dónde sacar cada valor:
+///   Supabase → Dashboard → Project Settings → API  (URL y anon/publishable key; NO uses la service_role).
+///   Google   → Cloud Console → APIs y servicios → Credenciales → ID de cliente OAuth.
+/// </summary>
+public static class AuthConfig
+{
+    // ───────────── 1) SUPABASE ─────────────
+
+    /// <summary>URL del proyecto, p. ej. "https://abcdefgh.supabase.co".</summary>
+    public const string SupabaseUrl = "https://TU-PROJECT-REF.supabase.co";
+
+    /// <summary>Clave pública (anon / publishable). Es pública por diseño: la seguridad la da RLS.</summary>
+    public const string SupabaseAnonKey = "TU_SUPABASE_ANON_KEY";
+
+    /// <summary>
+    /// Android: esquema de la app para volver desde Supabase (login con Google ASISTIDO por Supabase).
+    /// Agrega "com.companyname.logins://callback" (y "http://127.0.0.1:**" para escritorio) en
+    /// Supabase → Authentication → URL Configuration → Redirect URLs. Además activa el proveedor Google en
+    /// Supabase → Authentication → Providers con un cliente OAuth tipo "Web" (redirect: {SupabaseUrl}/auth/v1/callback).
+    /// </summary>
+    public const string SupabaseAndroidRedirectScheme = "com.companyname.logins";
+
+    // ───────────── 2) GOOGLE DIRECTO (nativo, sin Supabase) ─────────────
+
+    /// <summary>Windows/Mac: ID de cliente tipo "Aplicación de escritorio" (redirect loopback 127.0.0.1).</summary>
+    public const string GoogleClientId = "TU_DESKTOP_CLIENT_ID.apps.googleusercontent.com";
+
+    /// <summary>Solo el cliente "escritorio" lo exige en el canje del code. Google no lo trata como secreto real, pero no lo publiques.</summary>
+    public const string GoogleClientSecret = "TU_DESKTOP_CLIENT_SECRET";
+
+    /// <summary>Android: ID de cliente tipo "Android" (paquete com.companyname.logins + SHA-1 del keystore). Sin secret.</summary>
+    public const string GoogleAndroidClientId = "TU_ANDROID_CLIENT_ID.apps.googleusercontent.com";
+
+    /// <summary>Android: esquema inverso del client id: "com.googleusercontent.apps." + la parte del ID antes de ".apps.googleusercontent.com".</summary>
+    public const string GoogleAndroidRedirectScheme = "com.googleusercontent.apps.TU_ANDROID_CLIENT_ID";
+
+    // ───────────── ROLES ─────────────
+
+    /// <summary>Correos que reciben "admin" la primera vez que entran con Google (tabla local).</summary>
+    public static readonly string[] LocalAdminEmails = { "tu-correo@gmail.com" };
+
+    // ───────────── Validación ─────────────
+
+    public static bool SupabaseConfigured =>
+        !SupabaseUrl.Contains("TU-", StringComparison.OrdinalIgnoreCase) &&
+        !SupabaseAnonKey.StartsWith("TU_", StringComparison.OrdinalIgnoreCase);
+
+    public static bool GoogleConfigured =>
+#if ANDROID
+        !GoogleAndroidClientId.StartsWith("TU_", StringComparison.OrdinalIgnoreCase);
+#else
+        !GoogleClientId.StartsWith("TU_", StringComparison.OrdinalIgnoreCase);
+#endif
+}
